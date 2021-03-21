@@ -711,7 +711,7 @@ static int config_module(int reload)
 				tablename,
 				ast_strlen_zero(schemaname) ? "" : "'", ast_strlen_zero(schemaname) ? "current_schema()" : schemaname, ast_strlen_zero(schemaname) ? "" : "'");
 		} else {
-			snprintf(sqlcmd, sizeof(sqlcmd), "SELECT a.attname, t.typname, a.attlen, a.attnotnull, d.adsrc, a.atttypmod FROM pg_class c, pg_type t, pg_attribute a LEFT OUTER JOIN pg_attrdef d ON a.atthasdef AND d.adrelid = a.attrelid AND d.adnum = a.attnum WHERE c.oid = a.attrelid AND a.atttypid = t.oid AND (a.attnum > 0) AND c.relname = '%s' ORDER BY c.relname, attnum", table);
+			snprintf(sqlcmd, sizeof(sqlcmd), "SELECT a.attname, t.typname, a.attlen, a.attnotnull, pg_get_expr(d.adbin, d.adrelid), a.atttypmod FROM pg_class c, pg_type t, pg_attribute a LEFT OUTER JOIN pg_attrdef d ON a.atthasdef AND d.adrelid = a.attrelid AND d.adnum = a.attnum WHERE c.oid = a.attrelid AND a.atttypid = t.oid AND (a.attnum > 0) AND c.relname = '%s' ORDER BY c.relname, attnum", table);
 		}
 		/* Query the columns */
 		result = PQexec(conn, sqlcmd);
@@ -726,7 +726,7 @@ static int config_module(int reload)
 
 		rows = PQntuples(result);
 		if (rows == 0) {
-			ast_log(LOG_ERROR, "cdr_pgsql: Failed to query database columns. No columns found, does the table exist?\n");
+			ast_log(LOG_ERROR, "cdr_pgsql: Failed to query database columns. No columns found, does the table %s exist?\n", table);
 			PQclear(result);
 			unload_module();
 			ast_mutex_unlock(&pgsql_lock);

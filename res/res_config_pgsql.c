@@ -300,7 +300,7 @@ static struct tables *find_table(const char *database, const char *orig_tablenam
 		tablename = ast_alloca(strlen(orig_tablename) * 2 + 1);
 		PQescapeStringConn(pgsqlConn, tablename, orig_tablename, strlen(orig_tablename), NULL);
 
-		ast_str_set(&sql, 0, "SELECT a.attname, t.typname, a.attlen, a.attnotnull, d.adsrc, a.atttypmod FROM pg_class c, pg_type t, pg_attribute a LEFT OUTER JOIN pg_attrdef d ON a.atthasdef AND d.adrelid = a.attrelid AND d.adnum = a.attnum WHERE c.oid = a.attrelid AND a.atttypid = t.oid AND (a.attnum > 0) AND c.relname = '%s' ORDER BY c.relname, attnum", tablename);
+		ast_str_set(&sql, 0, "SELECT a.attname, t.typname, a.attlen, a.attnotnull, pg_get_expr(d.adbin, d.adrelid), a.atttypmod FROM pg_class c, pg_type t, pg_attribute a LEFT OUTER JOIN pg_attrdef d ON a.atthasdef AND d.adrelid = a.attrelid AND d.adnum = a.attnum WHERE c.oid = a.attrelid AND a.atttypid = t.oid AND (a.attnum > 0) AND c.relname = '%s' ORDER BY c.relname, attnum", tablename);
 	}
 
 	ast_mutex_lock(&pgsql_lock);

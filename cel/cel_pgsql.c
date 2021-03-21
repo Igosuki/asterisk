@@ -610,7 +610,7 @@ static int process_my_load_module(struct ast_config *cfg)
 				lenschema == 0 ? "" : "'", lenschema == 0 ? "current_schema()" : schemaname, lenschema == 0 ? "" : "'");
 		} else {
 			snprintf(sqlcmd, sizeof(sqlcmd),
-			"SELECT a.attname, t.typname, a.attlen, a.attnotnull, d.adsrc, a.atttypmod "
+			"SELECT a.attname, t.typname, a.attlen, a.attnotnull, pg_get_expr(d.adbin, d.adrelid), a.atttypmod "
 			"FROM pg_class c, pg_type t, pg_attribute a "
 			"LEFT OUTER JOIN pg_attrdef d ON a.atthasdef AND d.adrelid = a.attrelid "
 			"AND d.adnum = a.attnum WHERE c.oid = a.attrelid AND a.atttypid = t.oid "
