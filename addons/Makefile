@@ -32,8 +32,8 @@ ALL_C_MODS:=app_mysql \
             cdr_mysql \
             chan_mobile \
             chan_ooh323 \
-            format_mp3 \
             res_config_mysql
+            #format_mp3 \
 
 all: check_mp3 _all
 
